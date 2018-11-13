@@ -1,0 +1,82 @@
+---
+title: "BST5930 Data Visualization - Homework 1"
+author: "Miao Cai <miao.cai@slu.edu>"
+date: "`r Sys.Date()`"
+output: 
+  bookdown::pdf_document2:
+    includes:  
+      in_header: preamble.tex
+toc: FALSE
+linkcolor: blue
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, cache = T, warning=F, message = F)
+```
+
+```{r load data}
+dat = readr::read_csv(".//data.csv")
+```
+
+```{r manipulate data}
+library(ggplot2)
+library(ggthemes)
+library(dplyr)
+
+t = dat %>% 
+  filter(`Shortened Indicator Name` == "English Speaking Population",
+         Year == 2016)  
+
+us_value = t$Value[t$Place == "U.S. Total"]
+
+t$category = "USmean"
+t$category[t$Value < us_value] = "low"
+t$category[t$Value > us_value] = "high"
+t$category = factor(t$category, levels = c("high", "USmean", "low"))
+
+p = t %>% 
+  ggplot(aes(x = reorder(Place, Value), y = Value, fill = category)) +  
+  geom_bar(stat = "identity") + 
+  geom_hline(yintercept=us_value, linetype="dotted", size = 0.7, color = "grey65")+
+  scale_fill_manual(values = c("seagreen", "grey65", "orangered1"))+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) + 
+  ylab("Percent of population (5 years and over) only speaking English at home") + 
+  xlab("Sample cities") + coord_flip() + theme_calc()+
+  geom_text(aes(label = Value), nudge_y = 2.5, color = "royalblue3", size = 3)
+```
+
+
+Figure \@ref(fig:figure) demonstrates the percent of population (5 years and over) only speaking English at home among 31 sample cities in the United States, 2016. The national average percent in the United States is 78.4\%. More than a half of the cities have a English speaking rate lower than the national average. Most of these low English speaking rate cities are located in the Southern part of the United States, such as California and Texas. These cities are nearby Mexico and Cuba, so Espanio may be a widely adopted language in these places.
+
+```{r figure, fig.height=10, fig.width=10, out.width="97%", out.height="100%",fig.align="center", dpi = 200, fig.cap="Percent of population who only speack English at home in the United States, 2016"}
+p
+```
+
+
+
+
+
+
+```{r race_mortality, eval=FALSE}
+plot_mort = function(place_name){
+  t = dat %>% filter(`Shortened Indicator Name` %in% c("Death Rate (Overall)"),
+                   Sex == "Both",
+                   #`Race/Ethnicity` == "All",
+                   Place == place_name) %>% 
+    mutate(`Race/Ethnicity` = factor(`Race/Ethnicity`, levels = c("All", "Black", "White", "Hispanic")),
+           Year = factor(Year))
+
+ggplot(dat = t, aes(x = Year, y = Value, fill = `Race/Ethnicity`)) +
+  geom_bar(stat="identity", position=position_dodge(), width=0.75) +
+  scale_fill_manual(values=c('#D6D6D6', '#FF0000', '#FF8245','#228B22')) + 
+  theme_few() + ggtitle(paste("Mortality stratified by race in ", place_name, " 2010 - 2015", sep = ""))
+}
+
+plot_mort("Kansas City, MO")
+```
+
+
+
+
+
+

@@ -1,0 +1,104 @@
+---
+title: "BST5920 Data Visualization - Homework 3"
+author: "Miao Cai <miao.cai@slu.edu>"
+date: "`r Sys.Date()`"
+output: 
+  pdf_document:
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+\fbox{\begin{minipage}{\linewidth}
+The question is described below:
+\begin{itemize}
+\item Find a univariate (i.e., one variable) set of data and summarize its distribution. Use three or four of the methods for visualizing its distribution.  Consider things like: histogram, dot plot, box plot, violin plot, kernel density estimate, Box-Cox transformation, etc.  Write a brief summary of the methods you used and the conclusions you have drawn.
+\item Be sure to put your name at the top, save it as a PDF file. 
+\item Due Monday 10/29 at 11:59 pm.
+\end{itemize}
+
+\end{minipage}}
+
+
+I use the diamonds data from the R package "ggplot2". This dataset contains the  prices and other attributes of over 54,000 diamonds. The description of this data is shown below.
+
+- **price**: price in US dollars (\$326--\$18,823)
+- **carat**: weight of the diamond (0.2--5.01)
+- **cut** quality of the cut (Fair, Good, Very Good, Premium, Ideal)
+- **color**: diamond colour, from J (worst) to D (best)
+- **clarity**: a measurement of how clear the diamond is (I1 (worst), SI2, SI1, VS2, VS1, VVS2, VVS1, IF (best))
+- **x**: length in mm (0--10.74)
+- **y**: width in mm (0--58.9)
+- **z**: depth in mm (0--31.8)
+- **depth**: total depth percentage = z / mean(x, y) = 2 * z / (x + y) (43--79)
+- **table**: width of top of diamond relative to widest point (43--95)
+
+To reduce sample size and make cleaner descriptive plots, I focus on the diamonds with "Fair" quality of the cut (cut = "Fair") and worst diamond color (color = "J"). This leads to a sample of 119 diamonds. I use histogram and kernel density plots, violin and boxplots, and log transformations to explore the price distribution of these diamonds.
+
+
+```{r desc, echo=FALSE}
+require(tidyverse)
+
+head(diamonds)
+
+diamond_sub = diamonds %>%
+  filter(cut == "Fair", 
+         color == "J")
+```
+
+# Histogram and kernel density plot
+
+```{r Histogram}
+diamond_sub %>%
+  ggplot(aes(x = price)) +
+  geom_histogram(aes(y = ..density..),
+    color = "#1F3552",
+    fill = "#4271AE",
+    size = 0.7) +
+  geom_density(size = 1)
+```
+
+The histogram and kernel density plots show that price distribution is right skewed. The price of these diamonds are as high as over 15,000 dollars and as low as nearly 0 dollars. The highest density (mode) is at around 3,000 dollars.
+
+# Violin plot and boxplot
+
+```{r Violin}
+diamond_sub %>%
+  ggplot(aes(x = "", y = price)) +
+  geom_violin(
+    width = 0.5,
+    fill = "#1F3552",
+    alpha = 0.5,
+    color = "#1F3552",
+    size = 0.9) +
+  geom_boxplot(width = 0.1) + 
+  xlab("Price (US dollars)") + 
+  coord_flip()
+```
+
+Violin plot and boxplot also demonstrates the price distributions of these diamonds. It also shows that the prices are right skewed. The highest density is at around 2,500 dollars from the violin plot. The 25% quartile, median and 75% quartiles are approximately 2,500, 3,000, and 6,000 dollars. Diamonds with prices higher than about 11,500 are defined as outliers in the boxplot.
+
+# Log transformation of price
+
+```{r logTrans}
+require(tidyr)
+
+subtran = diamond_sub %>% 
+  mutate(id = as.character(1:length(cut)), logprice = log(price)) %>% 
+  select(price, logprice) %>% 
+  gather(key = type, value = value)
+
+subtran %>%
+  ggplot(aes(x = value)) +
+  geom_histogram(aes(y = ..density..),,
+    color = "#1F3552",
+    fill = "#4271AE",
+    size = 0.7) +
+  geom_density(size = 1) +
+  facet_wrap(~type, scales = "free")
+```
+
+A comparison of log transformed price (left) and original price (right) shows that the latter one has a distribution more similar to the normal distribution.
+
