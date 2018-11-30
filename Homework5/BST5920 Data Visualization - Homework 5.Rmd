@@ -1,0 +1,25 @@
+---
+title: "BST5920 Data Visualization - Homework 5"
+author: "Miao Cai <miao.cai@slu.edu>"
+date: "November 26, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Question
+
+Download the file  MinnesotaEducation.csv  from Blackboard.  This file contains county by county data from Minnesota on educational attainment for 18 to 24 year olds. The last two columns give the percentages of 18-24 year olds who (1) completed high school and (2) completed a bachelor's degree.  Make choropleth maps for both of these variables.  You will have to use the shape files from the tigris package and you must arrange the data so that the (alphabetical) ordering in the csv file matches the ordering in tigris.  
+
+Save your work as a PDF file.  Be sure to put your name at the top.  No explanations are needed, just two nice choropleth maps.  Provide a legend with reasonable cutoffs for the categories.
+
+```{r data}
+library(tigris)
+library(GISTools)
+library(dplyr)
+
+Minnesota = tigris::counties("Minnesota") 
+```
+
