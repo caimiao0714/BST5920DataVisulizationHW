@@ -1,0 +1,9 @@
+base
+tigris
+sp
+maptools
+RColorBrewer
+MASS
+rgeos
+GISTools
+dplyr
