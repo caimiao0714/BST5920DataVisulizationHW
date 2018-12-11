@@ -1,0 +1,18 @@
+---
+title: "BST5920 Data Visualization - Homework 6"
+author: "Miao Cai^[<miao.cai@slu.edu>]"
+date: "`r Sys.Date()`"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+1. Find some variable that is measured for each state (plus possibly the District of Columbia).
+2. Create a choropleth map in JavaScript/D3 that (a) has mouseover tool tips for each state, and (b) pans by dragging the mouse.
+
+Due 11:59 pm on Tuesday December 18.  Upload your index.html file.  At the top of your JavaScript code, use comments to describe to me your data, data source, and whatever other information you believe is needed.  I will run your code and assess its functionality
