@@ -6,7 +6,7 @@
 		<script type="text/javascript" src="d3.js"></script>
 		<link rel="stylesheet" href="tufte.css">
 		<style type="text/css">
-        body { margin-left: 200px;
+        body { margin: auto;
 			   max-width: 920px; }
 		path {stroke:white;
 				stroke-width: 1px;
@@ -18,7 +18,6 @@
 				.legend {
 				  font-size: 12px;
 				}
-
 				div.tooltip {   
 				  position: absolute;           
 				  text-align: center;           
@@ -39,16 +38,13 @@
         <h3 style="text-align:center"> Author: Miao Cai <a href="mailto:miao.cai@slu.edu">miao.cai@slu.edu</a></h3>
 		<p>This choropleth map shows the statewide supporting rate for the Republican party in the United States in 2017. </p>
 		<script type="text/javascript">
-
 			//Width and height
 			var width = 800;
 			var height = 500;
-
 			//Define map projection
 			var projection = d3.geoAlbersUsa()
 								   .translate([width/2, height/2])
 								   .scale([800]);
-
 			//Define path generator
 			var path = d3.geoPath()
 							 .projection(projection);
@@ -71,20 +67,16 @@
 						.append("svg")
 						.attr("width", width)
 						.attr("height", height);
-
 			//Load in agriculture data
 			d3.csv("rep.csv", function(data) {
-
 				//Set input domain for color scale
 				//color.domain([
 					//d3.min(data, function(d) { return d.Republican; }), 
 					//d3.max(data, function(d) { return d.Republican; })
 				//])
 				
-
 				//Load in GeoJSON data
 				d3.json("us-states.json", function(json) {
-
 					//Merge the ag. data and GeoJSON
 					//Loop through once for each ag. data value
 					for (var i = 0; i < data.length; i++) {
@@ -104,7 +96,6 @@
 					}
 					
 					
-
 					//Bind data and create one path per GeoJSON feature
 					svg.selectAll("path")
 					   .data(json.features)
@@ -146,9 +137,7 @@
 		  .data(color_domain)
 		  .enter().append("g")
 		  .attr("class", "legend");
-
 		  var ls_w = 20, ls_h = 20;
-
 		  legend.append("rect")
 		  .attr("x", 650)
 		  .attr("y", function(d, i){ return height -20- (i*ls_h) - 2*ls_h;})
@@ -156,7 +145,6 @@
 		  .attr("height", ls_h)
 		  .style("fill", function(d, i) { return color(d-1); })
 		  .style("opacity", 0.9);
-
 		  legend.append("text")
 		  .attr("x", 680)
 		  .attr("y", function(d, i){ return height -20 - (i*ls_h) - ls_h - 4;})
