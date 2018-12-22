@@ -15,7 +15,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
 ```
 
 
@@ -24,6 +24,7 @@ Creating flowcharts or conceptual frameworks is a commonly used tool in empirica
 ```{r diagramme}
 require(DiagrammeR)
 require(DiagrammeRsvg)
+require(magrittr)
 
 grViz("
       
@@ -51,9 +52,7 @@ digraph boxes_and_circles {
   
 }
       
-")
-
-export_graph("example.svg")
+") 
 ```
 
 The initial statement `digraph boxes_and_circles` is for a directed graph in the DOT language. comment lines begin with a # sign. These lines are disregarded.
