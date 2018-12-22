@@ -15,7 +15,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
 ```
 
 # Instrumental variable
@@ -91,3 +91,152 @@ y <- 1 + x + c + rnorm(1000, 0, 0.5)
 
 
 [R blogger reference](https://www.r-bloggers.com/instrumental-variables-simulation/)
+
+
+# One endogeneous variable
+
+## A simple demonstration of bias
+
+```{r demoone}
+library(MASS)
+library(tidyverse)
+nobs = 1000
+
+r1 = 0.3
+b1 = 1
+b2 = 2
+
+mt = matrix(c(1, r1, r1, 1),
+            nrow = 2, ncol = 2)
+
+dat = data.frame(mvrnorm(n=1000, mu=rep(2,2), Sigma = mt))
+dat = mutate(dat, Y = b1*X1 + b2*X2 + rnorm(nobs, 0, 1) )
+
+lmfitT = lm(Y ~ X1 + X2, data = dat)
+(coeffT = summary(lmfitT)$coefficients[,1])
+
+lmfitF = lm(Y ~ X1, data = dat)
+(coeffF = summary(lmfitF)$coefficients[,1])
+
+coeffT[2] - coeffF[2]
+
+ggplot(dat, aes(x = X1, y = Y, color = X2)) + geom_point() + 
+  geom_abline(intercept = coeffT[1], slope = coeffT[2], color = "green") + 
+  geom_abline(intercept = coeffF[1], slope = coeffF[2], color = "red")
+```
+
+
+## increase sample size
+
+```{r one}
+##### function ######
+onefunction = function(nobs = 1000, r1 = 0.3, b1 = 1, b2 = 1){
+  mt = matrix(c(1, r1, r1, 1),
+            nrow = 2, ncol = 2)
+
+  dat = data.frame(mvrnorm(n=nobs, mu=rep(2,2), Sigma = mt))
+  dat = mutate(dat, Y = b1*X1 + b2*X2 + rnorm(nobs, 0, 1) )
+  
+  lmfitT = lm(Y ~ X1 + X2, data = dat)
+  coeffT = summary(lmfitT)$coefficients[,1]
+  lmfitF = lm(Y ~ X1, data = dat)
+  coeffF = summary(lmfitF)$coefficients[,1]
+  
+  return(coeffF[2])
+}
+
+# increase the number of obs
+bias = vector(length = 100L)
+for (i in (1:100)*1000){
+  bias[i/1000] = abs(onefunction(nobs = i) - 1)
+}
+
+data.frame(n = (1:100)*1000, bias = bias) %>% 
+  ggplot(aes(x = n, y = bias)) + geom_line() + 
+  ggtitle("Increase sample size")
+```
+
+## Increase correlation coefficient
+
+```{r increaseR}
+# increase the number of obs
+bias = vector(length = 1000L)
+for (i in (0:999)/1000){
+  bias[i*1000 + 1] = abs(onefunction(r1 = i) - 1)
+}
+
+data.frame(r = (0:999)/1000, bias = bias) %>% 
+  ggplot(aes(x = r, y = bias)) + geom_line() +
+  ggtitle("Increase correlation coefficient")
+```
+
+
+```{r increaseb1}
+bias = vector(length = 100L)
+for (i in 1:100){
+  bias[i] = abs(onefunction(b1 = i, b2 = 1) - i)
+}
+
+data.frame(b1 = 1:100, bias = bias) %>% 
+  ggplot(aes(x = b1, y = bias)) + geom_line() +
+  ggtitle("Increase b1")
+```
+
+```{r increaseb2}
+# increase the number of obs
+bias = vector(length = 100L)
+for (i in 1:100){
+  bias[i] = abs(onefunction(b2 = i) - 1)
+}
+
+data.frame(b2 = 1:100, bias = bias) %>% 
+  ggplot(aes(x = b2, y = bias)) + geom_line() +
+  ggtitle("Increase b2")
+```
+
+
+# Two confounders
+
+```{r two}
+library(MASS)
+nobs = 1000
+
+r1 = 0.3
+r2 = 0.5
+r3 = 0.8
+
+mt = matrix(c(1, 0.3, 0.5, 0.8, 
+              0.3, 1, 0, 0,
+              0.5, 0, 1, 0,
+              0.8, 0, 0, 1),
+            nrow =3, ncol = 3)
+
+x1 = rnorm(nobs, 2, 2)
+
+
+```
+
+
+
+
+# Three confounders
+
+```{r three}
+library(MASS)
+nobs = 1000
+
+r1 = 0.3
+r2 = 0.5
+r3 = 0.8
+
+mt = matrix(c(1, 0.3, 0.5, 0.8, 
+              0.3, 1, 0, 0,
+              0.5, 0, 1, 0,
+              0.8, 0, 0, 1),
+            nrow =3, ncol = 3)
+
+x1 = rnorm(nobs, 2, 2)
+
+
+```
+
