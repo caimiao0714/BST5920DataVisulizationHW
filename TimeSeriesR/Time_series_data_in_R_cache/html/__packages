@@ -15,3 +15,7 @@ Kendall
 forecast
 bindrcpp
 tseries
+fma
+expsmooth
+lmtest
+fpp
