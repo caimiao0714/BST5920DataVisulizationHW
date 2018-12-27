@@ -1,0 +1,25 @@
+---
+title: "DEA two stage regression"
+author: "Miao Cai"
+date: "12/26/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Data Envelopment Analysis (DEA) is a commonly used method to estimate the efficiency scores of decision making units.
+
+In this simulation, I used the following variable notations:
+
+- I: input variables used in DEA
+- O: output variables used in DEA
+- X: independent variables used in the second-stage regression
+
+```{r data}
+require(Benchmarking)
+
+
+```
+
