@@ -18,22 +18,40 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+# Introduction
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+Why my code is slow?
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+- complexity of calculations
+- Carefully consider disk operations to write fast, scalable code
 
-```{r cars}
-summary(cars)
+Benchmarking read and write performance in R
+
+```{r benchmark, warning=FALSE}
+library(microbenchmark)
+set.seed(666)
+summary(microbenchmark( t0 = rnorm(100), t1 = rnorm(10000) ))
 ```
 
-## Including Plots
+## How does processing time vary by data size?
 
-You can also embed plots, for example:
+If you are processing all elements of two data sets, and one data set is bigger, then the bigger data set will take longer to process. However, it's important to realize that how much longer it takes is not always directly proportional to how much bigger it is. That is, if you have two data sets and one is two times the size of the other, it is not guaranteed that the larger one will take twice as long to process. It could take 1.5 times longer or even four times longer. It depends on which operations are used to process the data set.
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+# Load the microbenchmark package
+library(microbenchmark)
+
+# Compare the timings for sorting different sizes of vector
+mb <- microbenchmark(
+  "1e5" = sort(rnorm(1e5)), # Sort a random normal vector length 1e5
+  "2.5e5" = sort(rnorm(2.5e5)), # Sort a random normal vector length 2.5e5
+  "5e5" = sort(rnorm(5e5)), # Sort a random normal vector length 5e5
+  "7.5e5" = sort(rnorm(7.5e5)),
+  "1e6" = sort(rnorm(1e6)),
+  times = 10
+)
+
+# Plot the resulting benchmark object
+summary(mb)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

@@ -1,0 +1,47 @@
+---
+title: "Writing Efficient R Code"
+author: "Miao Cai"
+date: "1/9/2019"
+output:
+  html_document:
+    theme: yeti
+    toc: true
+    toc_float: true
+    number_sections: true
+    df_print: paged
+    code_folding: show
+  pdf_document:
+    number_sections: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+```{r RandC, fig.cap="Comparing R and C"}
+knitr::include_graphics("RandC.png")
+```
+
+> Premature optimization is the root of all evil
+> -- by Donald Knuth
+
+You should only optimize your code when necessary. 
+
+## Keep your R version updated.
+
+One of the relatively easy optimizations available is to use an up-to-date version of R. In general, R is very conservative, so upgrading doesn't break existing code. However, a new version will often provide free speed boosts for key functions. The `version` command returns a list that contains (among other things) the major and minor version of R currently being used.
+
+```{r version}
+# Print the R version details using version
+version
+
+# Assign the variable major to the major component
+(major <- version$major)
+
+# Assign the variable minor to the minor component
+(minor <- version$minor)
+```
+
+## Benchmark
