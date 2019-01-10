@@ -10,3 +10,8 @@ tellint = function(col){
 
 
 x[,unlist(lapply(x, tellint)) ]
+
+
+
+# an alternative solution using dplyr
+dat %in% select_if(is.numeric)
