@@ -15,7 +15,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, cache = TRUE)
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Introduction
@@ -72,6 +72,8 @@ library("benchmarkme")
 res = benchmark_std(runs = 3)
 plot(res)
 upload_results(res)
+
+
 ```
 
 - SALUS windows computer: You are ranked 79 out of 82 machines.
@@ -80,8 +82,8 @@ upload_results(res)
 For many problems your time is the expensive part. If having a faster computer makes you more productive, it can be cost effective to buy one. However, before you splash out on new toys for yourself, your boss/partner may want to see some numbers to justify the expense. Measuring the performance of your computer is called benchmarking, and you can do that with the `benchmarkme` package.
 
 ```{r}
-(ram <- benchmarkme::get_ram())
-(cpu <- benchmarkme::get_cpu())
+(ram <- get_ram())
+(cpu <- get_cpu())
 ```
 
 The benchmarkme package allows you to run a set of standardized benchmarks and compare your results to other users. One set of benchmarks tests is reading and writing speeds.
@@ -89,138 +91,7 @@ The benchmarkme package allows you to run a set of standardized benchmarks and c
 The function call
 
 ```{r}
-res = benchmarkme::benchmark_io(runs = 1, size = 5)
+res = benchmark_io(runs = 1, size = 5)
 ```
 
 records the length of time it takes to read and write a 50 MB file.
-
-
-# Memory Allocation
-
-In R
-
-- Memory allocation happens automatically
-- R allocate memory in RAM to store variables
-- Minimize variable assignment for speed
-
-## Example
-
-To create a sequence of numbers:
-
-1. Sequecing: the obvious and best way:
-
-```
-x <- 1:n
-```
-
-2. Preallocating: not so bad:
-
-```
-x <- vector("numeric", n)
-for (i in 1:n) {
-  x[i] <- i  
-}
-```
-
-3. Growing: don't ever do this (cardinal sin):
-
-```
-x <- NULL
-for (i in 1:n) {
-  x <- c(x, i) 
-}
-```
-
-> The first rule of R: never, ever grow a vector.
-
-## The importance of vectorizing your code
-
-General rule:
-
-- Calling an R function eventually leads to C or FORTRAN code
-- This code very heavily optimized
-
-Goal:
-
-- Access the underlying C or FORTRAN codes as quickly as possible; the fewer functions call the better.
-
-Vectorized functions
-
-- Many R functions are vectorized
-- single number but return a vector `rnorm(4)`
-- vector as input `mean(c(36, 48))`
-
-
-### Looping and vectorizing
-
-Allocation:
-
-- Loop: One-off cost
-- Vectorized: comparable
-
-Generation:
-
-- Loop: one million calls to `rnorm()`
-- Vectorized: a single call to `rnorm()`
-
-
-Assignment:
-
-- Loop: One million calls to the assignment method
-- Vectorized: a single assignment
-
-
-## Dataframe and Matrices
-
-- Dataframes: tabular structure with rows and columns. Column data should be the same type while the rows can be different types
-- Matrices: a rectangular data structure and you can perform usual subsetting and extracting operations. Every element must be the same data type
-
-> The third rule: Use a matrix whenever appropriate.
-
-Compare selecting columns in a dataframe and matrix
-
-```{r}
-zz = as.matrix(mtcars)
-microbenchmark::microbenchmark(mtcars[, 1], zz[, 1])
-```
-
-Compare selecting rows in a dataframe and matrix
-
-```{r}
-microbenchmark::microbenchmark(mtcars[1, ], zz[1, ])
-```
-
-
-# Find the bottleneck
-
-**Code profiling**
-
-The general idea is to:
-
-- Run the code
-- Every few milliseconds, record what is being currently executed
-- `Rprof()` comes with R and does exactly this
-  - Tricky to use
-  - 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
